@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         String[] methodSecured = {"/api/*"};
 
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/registration", "/authenticate").permitAll()
+                .authorizeRequests().antMatchers("/registration", "/authenticate", "/api/allProducts").permitAll()
                 .antMatchers(methodSecured).authenticated();
 //                .and().logout().deleteCookies("JSESSIONID").logoutUrl("/logout").logoutSuccessUrl("/login");
 
