@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -32,11 +35,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         String[] methodSecured = {"/api/*"};
 
         http.csrf().disable()
+                .cors().configurationSource(corsConfigurationSource())
+                .and()
                 .authorizeRequests().antMatchers("/registration", "/authenticate", "/api/allProducts").permitAll()
-                .antMatchers(methodSecured).authenticated();
+                .antMatchers(methodSecured).authenticated().and().apply(authTokenConfig);
 //                .and().logout().deleteCookies("JSESSIONID").logoutUrl("/logout").logoutSuccessUrl("/login");
-
-        http.apply(authTokenConfig);
     }
 
     @Override
@@ -53,6 +56,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration cf = new CorsConfiguration();
+        cf.addAllowedHeader("x-auth-token");
+        cf.addAllowedHeader("Content-Type");
+        source.registerCorsConfiguration("/**", cf.applyPermitDefaultValues());
+
+        return source;
     }
 
 }

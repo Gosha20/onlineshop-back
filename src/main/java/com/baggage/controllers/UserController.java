@@ -71,7 +71,7 @@ public class UserController {
 
     }
 
-    @GetMapping(value = "/api/userInfo", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/userInfo")
     public ResponseEntity<?> getUserById(@RequestHeader(value = AUTH_HEADER_NAME) String authHeader) {
         try {
             String userName = TokenUtil.getUserNameFromToken(authHeader);
